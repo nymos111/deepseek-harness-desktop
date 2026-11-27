@@ -47,6 +47,8 @@ const DEFAULTS = {
   rememberWindowState: true,
   /** Page zoom factor applied to the harness UI. */
   zoomFactor: 1,
+  /** Colour scheme for the window chrome and the harness UI: system | dark | light. */
+  theme: 'dark',
 };
 
 function isDir(value) {
@@ -97,6 +99,7 @@ function loadConfig(overrides = {}) {
   const config = { ...fileConfig, ...overrides };
   config.port = Number.isFinite(Number(config.port)) ? Number(config.port) : 0;
   config.zoomFactor = Number(config.zoomFactor) > 0 ? Number(config.zoomFactor) : 1;
+  if (!['system', 'dark', 'light'].includes(config.theme)) config.theme = 'dark';
   if (isDir(config.cwd) === false) config.cwd = os.homedir();
   return config;
 }

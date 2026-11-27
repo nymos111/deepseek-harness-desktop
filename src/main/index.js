@@ -13,6 +13,7 @@ const {
   nativeImage,
   shell,
   clipboard,
+  nativeTheme,
 } = require('electron');
 
 const { CONFIG_FILE, DATA_DIR, loadConfig, migrateLegacyDirs, resolveDshPath } = require('./config');
@@ -219,12 +220,13 @@ function createMainWindow(url) {
   }
 
   const bounds = state.config.rememberWindowState ? state.windowState.bounds() : { width: 1280, height: 840 };
+  const pageBackground = state.config.theme === 'light' ? '#ffffff' : '#141519';
   const win = new BrowserWindow({
     ...bounds,
     minWidth: 960,
     minHeight: 640,
     show: false,
-    backgroundColor: '#141519',
+    backgroundColor: pageBackground,
     title: APP_NAME,
     icon: ICON,
     autoHideMenuBar: false,
@@ -463,6 +465,15 @@ function buildMenu() {
           click: () => setZoom(1),
         },
         { type: 'separator' },
+        {
+          label: 'Тема',
+          submenu: [
+            { label: 'Тёмная', type: 'radio', checked: state.config.theme === 'dark', click: () => setTheme('dark') },
+            { label: 'Светлая', type: 'radio', checked: state.config.theme === 'light', click: () => setTheme('light') },
+            { label: 'Как в системе', type: 'radio', checked: state.config.theme === 'system', click: () => setTheme('system') },
+          ],
+        },
+        { type: 'separator' },
         { role: 'togglefullscreen', label: 'Полный экран' },
         { role: 'toggleDevTools', label: 'Инструменты разработчика' },
       ],
@@ -501,6 +512,23 @@ function buildMenu() {
     },
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+/** Apply a colour scheme to the native chrome and, through it, to the harness UI. */
+function setTheme(value) {
+  const theme = ['system', 'light', 'dark'].includes(value) ? value : 'dark';
+  state.config.theme = theme;
+  nativeTheme.themeSource = theme;
+  saveConfig({ theme });
+  buildMenu();
+  const win = state.mainWindow;
+  if (win && !win.isDestroyed()) {
+    try {
+      win.setBackgroundColor(theme === 'light' ? '#ffffff' : '#141519');
+    } catch {
+      /* cosmetic only */
+    }
+  }
 }
 
 function setZoom(factor) {
@@ -617,6 +645,7 @@ async function bootstrap() {
   reclaimOrphanBackend();
 
   state.config = loadConfig();
+  nativeTheme.themeSource = state.config.theme;
   state.windowState = new WindowState(STATE_FILE);
   state.dshPath = resolveDshPath(state.config);
   state.otherInstances = detectOtherInstances();

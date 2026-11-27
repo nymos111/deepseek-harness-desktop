@@ -70,6 +70,7 @@ bash scripts/launch.sh
 | `closeToTray` | `false` | `true` hides the window to the tray and keeps the engine running. |
 | `rememberWindowState` | `true` | Remember window size and position. |
 | `zoomFactor` | `1` | UI zoom (saved from the View menu). |
+| `theme` | `"dark"` | `dark`, `light` or `system`; applied to the window chrome and the harness UI. |
 
 Environment: `DSH_DESKTOP_DSH` — path to `dsh`; `DSH_DESKTOP_URL` — attach to an
 already running server by its token URL (the app will not boot an engine).
@@ -87,6 +88,9 @@ Tokens are masked (`token=***`); the error screen only shows lines from the
 current launch. Help → Open log folder opens the directory.
 
 ## Shortcuts
+
+The colour scheme lives in **View → Theme** (Dark / Light / Follow system) and
+in `theme` in the settings file; the default is dark.
 
 | Keys | Action |
 | --- | --- |
