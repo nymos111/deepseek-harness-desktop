@@ -6,8 +6,6 @@ A native window for **DeepSeek Harness**. The app boots its own local `dsh web`
 engine, supervises it, and shows the harness UI in a dedicated Electron window —
 no browser, no tabs, no address bar, no bundled Chromium.
 
-![DeepSeek Harness desktop shell](assets/screenshot.png)
-
 > Unofficial shell. Not affiliated with DeepSeek. The whale mark belongs to
 > DeepSeek and is used here only to denote a compatible client.
 

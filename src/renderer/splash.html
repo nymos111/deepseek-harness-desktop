@@ -11,16 +11,20 @@
   </head>
   <body>
     <main class="splash">
-      <img class="logo" src="../../assets/icon.png" alt="" />
-      <h1>DeepSeek Harness</h1>
-      <p class="status"><span class="spinner"></span><span id="status">Запуск движка…</span></p>
-      <p class="hint" id="hint">Поднимается локальный сервер DeepSeek Harness. Первый запуск с плагинами может занять до минуты.</p>
-      <p class="hint note" id="note" hidden></p>
+      <div class="row">
+        <img class="logo" src="../../assets/icon.png" alt="" width="48" height="48" />
+        <div class="col">
+          <h1>DeepSeek Harness</h1>
+          <p class="status"><span class="spinner" aria-hidden="true"></span><span id="status">Запуск движка…</span></p>
+          <p class="hint" id="hint">Первый запуск с плагинами может занять до минуты.</p>
+          <p class="hint" id="note" hidden></p>
+        </div>
+      </div>
       <div class="foot">
-        <span id="meta">DeepSeek Harness</span>
+        <span id="meta"></span>
         <span id="timer"></span>
       </div>
-      <div class="progress"></div>
+      <div class="progress"><span class="bar"></span></div>
     </main>
     <script src="splash.js"></script>
   </body>

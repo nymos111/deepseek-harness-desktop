@@ -144,7 +144,7 @@ function logTail() {
 }
 
 const PAGE_SIZE = {
-  'splash.html': [480, 380],
+  'splash.html': [460, 236],
   'error.html': [740, 640],
 };
 
@@ -165,7 +165,7 @@ function createSplash(page = 'splash.html') {
     type: 'splash',
     show: false,
     center: true,
-    backgroundColor: '#0b0f17',
+    backgroundColor: '#141519',
     title: APP_NAME,
     icon: ICON,
     skipTaskbar: false,
@@ -224,7 +224,7 @@ function createMainWindow(url) {
     minWidth: 960,
     minHeight: 640,
     show: false,
-    backgroundColor: '#0b0f17',
+    backgroundColor: '#141519',
     title: APP_NAME,
     icon: ICON,
     autoHideMenuBar: false,
