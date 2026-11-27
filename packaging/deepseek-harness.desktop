@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=DeepSeek Harness
+GenericName=AI Agent Workspace
+Comment=DeepSeek Harness in a native desktop window
+Exec=/usr/bin/deepseek-harness
+Icon=deepseek-harness
+Terminal=false
+Categories=Development;
+StartupWMClass=deepseek-harness
+StartupNotify=true

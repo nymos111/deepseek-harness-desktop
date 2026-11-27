@@ -1,0 +1,29 @@
+# Maintainer: Nymos <ab5784087@gmail.com>
+pkgname=deepseek-harness-desktop-git
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Native Electron desktop shell for DeepSeek Harness"
+arch=('any')
+url="https://github.com/nymos111/deepseek-harness-desktop"
+license=('MIT')
+depends=('electron43' 'dsh')
+optdepends=('rsvg-convert: regenerate icons')
+provides=('deepseek-harness-desktop')
+conflicts=('deepseek-harness-desktop')
+source=("$pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$pkgname"
+  printf '0.1.0.r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+  cd "$pkgname"
+  install -d "$pkgdir/opt/deepseek-harness" "$pkgdir/usr/bin"
+  cp -r src scripts assets package.json "$pkgdir/opt/deepseek-harness/"
+  ln -s /opt/deepseek-harness/scripts/launch.sh "$pkgdir/usr/bin/deepseek-harness"
+  install -Dm644 "$srcdir/$pkgname/packaging/deepseek-harness.desktop" \
+    "$pkgdir/usr/share/applications/deepseek-harness.desktop"
+  install -Dm644 assets/icon.png "$pkgdir/usr/share/pixmaps/deepseek-harness.png"
+}

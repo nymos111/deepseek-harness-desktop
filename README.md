@@ -112,6 +112,12 @@ Attaching to a running server needs its token URL:
 DSH_DESKTOP_URL='http://127.0.0.1:3080/?token=…' deepseek-harness
 ```
 
+## Packaging
+
+`packaging/PKGBUILD` builds a system package from this repository
+(`deepseek-harness-desktop-git`, installs to `/opt/deepseek-harness`). It is not
+in the AUR yet — build it locally with `makepkg -si` or submit it there.
+
 ## Update / uninstall
 
 ```sh
