@@ -1,37 +1,37 @@
 # DeepSeek Harness — desktop shell
 
-Нативное окно для DeepSeek Harness: приложение само поднимает локальный движок
-(`dsh web`), следит за ним и показывает интерфейс в отдельном окне Electron —
-без браузера, вкладок и адресной строки.
+[Русский](README.ru.md) · ![license](https://img.shields.io/github/license/nymos111/deepseek-harness-desktop) ![platform](https://img.shields.io/badge/platform-Linux-informational) ![electron](https://img.shields.io/badge/electron-38%2B-47848f) ![size](https://img.shields.io/github/repo-size/nymos111/deepseek-harness-desktop) ![check](https://github.com/nymos111/deepseek-harness-desktop/actions/workflows/check.yml/badge.svg)
 
-![DeepSeek Harness](assets/screenshot.png)
+A native window for **DeepSeek Harness**. The app boots its own local `dsh web`
+engine, supervises it, and shows the harness UI in a dedicated Electron window —
+no browser, no tabs, no address bar, no bundled Chromium.
 
-> Неофициальная оболочка. Не связана с DeepSeek; логотип-кит принадлежит DeepSeek
-> и используется здесь только для обозначения совместимого клиента.
+![DeepSeek Harness desktop shell](assets/screenshot.png)
 
-## Что это даёт
+> Unofficial shell. Not affiliated with DeepSeek. The whale mark belongs to
+> DeepSeek and is used here only to denote a compatible client.
 
-- **Отдельное приложение.** Иконка в меню, своё окно, свой процесс, команда
-  `deepseek-harness`. Браузер не участвует.
-- **Супервизор движка.** Приложение запускает `dsh web` на свободном порту
-  (`--port 0`), ждёт строку `dsh web: <url>` и только потом открывает окно.
-- **Аварийное восстановление.** Падение движка показывает экран ошибки с хвостом
-  лога и кнопкой «Повторить»; до трёх автоматических перезапусков с backoff.
-- **Чистое завершение.** При выходе движок получает SIGTERM, через 8 с — SIGKILL.
-  Если приложение упало жёстко, осиротевший процесс добивается при следующем
-  запуске (по сохранённому PID).
-- **Нативные мелочи:** меню на русском, трей, запоминание размера окна, зум
-  (`Ctrl+±`/`Ctrl+0`), внешние ссылки открываются в системном браузере, один
-  экземпляр приложения на пользователя.
+## Why this one
 
-## Требования
+- **No 250 MB download.** It uses the Electron you already have (`electron38`–`electron43`
+  from your distro or `node_modules/electron`). The whole repo is a few hundred KB.
+- **It supervises the engine, not just displays it.** Boots `dsh web --port 0`, waits
+  for the announced URL, restarts it with backoff if it dies, shows an error screen
+  with the log tail instead of a blank window, and reaps orphaned engines after a
+  hard crash.
+- **Wayland-first.** Tested on Hyprland (`ozone-platform-hint=auto`), works on X11.
+- **Nothing leaves the machine.** The engine binds `127.0.0.1` only, tokens are
+  redacted in logs, no telemetry, no analytics, plain MIT.
+- **Small enough to audit.** ~1k lines of plain CommonJS, four small renderer pages.
 
-- Linux с графической сессией (проверено на Hyprland/Wayland, работает и на X11);
-- установленный `dsh` (профиль `web`) в `PATH` или `~/.local/bin/dsh`;
-- Electron 38+ в системе (`electron43`/`electron39`) **или** `node_modules/electron`
-  в каталоге приложения. Скачивать Electron приложению не нужно.
+## Requirements
 
-## Установка
+- Linux with a graphical session (Hyprland/Wayland and X11);
+- `dsh` (profile `web`) in `PATH` or `~/.local/bin/dsh`;
+- Electron 38+ installed system-wide (`electron43` / `electron39`) **or**
+  `node_modules/electron` inside the app directory.
+
+## Install
 
 ```sh
 git clone https://github.com/nymos111/deepseek-harness-desktop.git
@@ -39,101 +39,99 @@ cd deepseek-harness-desktop
 bash scripts/install.sh
 ```
 
-Скрипт кладёт ярлык в меню приложений (`deepseek-harness.desktop`), иконки в
-`~/.local/share/icons/hicolor/*` и ссылку `~/.local/bin/deepseek-harness`.
+The installer adds an application-menu entry (`deepseek-harness.desktop`), icons
+under `~/.local/share/icons/hicolor/*`, and a `~/.local/bin/deepseek-harness`
+launcher.
 
-Запуск:
+Run it:
 
 ```sh
-deepseek-harness            # из терминала
-gtk-launch deepseek-harness # как из меню приложений
+deepseek-harness              # from a terminal
+gtk-launch deepseek-harness   # as the menu does
 ```
 
-Без установки:
+Without installing:
 
 ```sh
 bash scripts/launch.sh
 ```
 
-## Настройки
+## Settings
 
-Файл `~/.config/deepseek-harness/config.json` создаётся при первом запуске:
+`~/.config/deepseek-harness/config.json` is created on first launch:
 
-| Поле | По умолчанию | Что делает |
+| Field | Default | Meaning |
 | --- | --- | --- |
-| `dshPath` | `null` | Путь к `dsh`. `null` — искать в `PATH` и `~/.local/bin`. |
-| `profileName` | `"web"` | Какой профиль DSH поднимать. |
-| `host` | `"127.0.0.1"` | Адрес движка. Наружу приложение ничего не отдаёт. |
-| `port` | `0` | `0` — свободный порт от ОС. |
-| `extraArgs` | `[]` | Дополнительные аргументы `dsh web`. |
-| `cwd` | `$HOME` | Рабочий каталог движка. |
-| `readyTimeoutMs` | `180000` | Сколько ждать готовности движка. |
-| `closeToTray` | `false` | `true` — закрытие окна сворачивает в трей, движок продолжает работать. |
-| `rememberWindowState` | `true` | Запоминать размер и позицию окна. |
-| `zoomFactor` | `1` | Масштаб интерфейса (сохраняется из меню «Вид»). |
+| `dshPath` | `null` | Path to `dsh`; `null` searches `PATH` and `~/.local/bin`. |
+| `profileName` | `"web"` | DSH profile to boot. |
+| `host` | `"127.0.0.1"` | Engine bind address. Nothing is exposed to the network. |
+| `port` | `0` | `0` = let the OS choose a free port. |
+| `extraArgs` | `[]` | Extra `dsh web` arguments. |
+| `cwd` | `$HOME` | Engine working directory. |
+| `readyTimeoutMs` | `180000` | How long to wait for the engine URL. |
+| `closeToTray` | `false` | `true` hides the window to the tray and keeps the engine running. |
+| `rememberWindowState` | `true` | Remember window size and position. |
+| `zoomFactor` | `1` | UI zoom (saved from the View menu). |
 
-Переменные окружения: `DSH_DESKTOP_DSH` — путь к `dsh`;
-`DSH_DESKTOP_URL` — подключиться к уже запущенному серверу по его URL с токеном
-(движок в этом случае не запускается).
+Environment: `DSH_DESKTOP_DSH` — path to `dsh`; `DSH_DESKTOP_URL` — attach to an
+already running server by its token URL (the app will not boot an engine).
 
-## Логи и диагностика
+## Logs
 
 ```
-~/.local/share/deepseek-harness/logs/desktop.log   # оболочка: запуск, падения, перезапуски
-~/.local/share/deepseek-harness/logs/backend.log   # stdout/stderr движка
-~/.local/share/deepseek-harness/window-state.json  # геометрия окна
-~/.local/share/deepseek-harness/backend.pid        # PID движка для уборки сирот
+~/.local/share/deepseek-harness/logs/desktop.log   # shell: start, crashes, restarts
+~/.local/share/deepseek-harness/logs/backend.log   # engine stdout/stderr
+~/.local/share/deepseek-harness/window-state.json  # window geometry
+~/.local/share/deepseek-harness/backend.pid        # engine PID for orphan cleanup
 ```
 
-Токены в логах маскируются (`token=***`). Экран ошибки показывает только строки
-текущего запуска. Меню «Справка → Открыть папку логов» открывает каталог.
+Tokens are masked (`token=***`); the error screen only shows lines from the
+current launch. Help → Open log folder opens the directory.
 
-## Горячие клавиши
+## Shortcuts
 
-| Клавиши | Действие |
+| Keys | Action |
 | --- | --- |
-| `Ctrl+Shift+R` | Перезапустить движок |
-| `Ctrl+R` | Обновить интерфейс |
-| `Ctrl+±`, `Ctrl+0` | Зум |
-| `Ctrl+Q` | Выход |
-| `F11` | Полный экран |
-| `Ctrl+Shift+I` | Инструменты разработчика |
+| `Ctrl+Shift+R` | Restart the engine |
+| `Ctrl+R` | Reload the UI |
+| `Ctrl+±`, `Ctrl+0` | Zoom |
+| `Ctrl+Q` | Quit |
+| `F11` | Fullscreen |
+| `Ctrl+Shift+I` | DevTools |
 
-## Про второй экземпляр DSH
+## About a second DSH instance
 
-Приложение поднимает **свой** движок. Если рядом уже работает `dsh web`
-(например, веб-версия в браузере), оба используют `~/.dsh`: сессии и настройки
-общие, но возможны гонки при обновлении токена аккаунта DeepSeek (в логе видно
-`403` на `auth-api/v0/users/current`). Для стабильной работы лучше держать
-запущенным что-то одно; сплэш предупреждает, если рядом найден другой экземпляр.
+The app runs **its own** engine. If `dsh web` is already running (e.g. the browser
+GUI), both share `~/.dsh`: sessions and settings are common, but account-token
+refreshes can race (a `403` on `auth-api/v0/users/current` shows up in the log).
+Prefer one at a time; the splash warns when another instance is detected.
 
-Приложению нужен URL с токеном, поэтому «подключиться» к уже работающему серверу
-можно только явно:
+Attaching to a running server needs its token URL:
 
 ```sh
 DSH_DESKTOP_URL='http://127.0.0.1:3080/?token=…' deepseek-harness
 ```
 
-## Обновление и удаление
+## Update / uninstall
 
 ```sh
-git pull && bash scripts/install.sh   # обновить ярлык и иконки
-bash scripts/uninstall.sh             # убрать из меню (конфиг и логи остаются)
+git pull && bash scripts/install.sh   # refresh entry and icons
+bash scripts/uninstall.sh             # remove from the menu; config and logs stay
 ```
 
-## Структура
+## Layout
 
 ```
-src/main/index.js        # жизненный цикл, окна, меню, трей, IPC
-src/main/backend.js      # spawn/stop/restart `dsh web`, разбор строки с URL
-src/main/config.js       # config.json, поиск dsh, миграция старых каталогов
-src/main/logger.js       # логи с ротацией и буфером текущего запуска
-src/main/window-state.js # геометрия окна
-src/preload.js           # мост только для сплэша и экрана ошибки
-src/renderer/            # сплэш, экран ошибки, стили
-assets/icon.svg          # иконка; PNG собираются `bash scripts/make-icons.sh`
-scripts/install.sh       # ярлык в меню + иконки + deepseek-harness в PATH
+src/main/index.js        # lifecycle, windows, menu, tray, IPC
+src/main/backend.js      # spawn/stop/restart `dsh web`, URL parsing
+src/main/config.js       # config.json, dsh discovery, legacy-dir migration
+src/main/logger.js       # rotating logs + per-launch buffer
+src/main/window-state.js # window geometry
+src/preload.js           # bridge for the splash and error pages only
+src/renderer/            # splash, error screen, styles
+assets/icon.svg          # source icon; PNGs via `bash scripts/make-icons.sh`
+scripts/install.sh       # menu entry + icons + `deepseek-harness` on PATH
 ```
 
-Интерфейс самого Harness — это собственный фронтенд `dsh`, приложение его не
-подменяет: окно загружает локальный адрес движка с одноразовым токеном.
+The harness UI itself is DSH's own frontend; the shell does not reimplement it.
+The window loads the local engine URL with a one-time token.

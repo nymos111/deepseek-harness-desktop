@@ -11,5 +11,13 @@
     "install:desktop": "bash scripts/install.sh",
     "uninstall:desktop": "bash scripts/uninstall.sh",
     "icons": "bash scripts/make-icons.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nymos111/deepseek-harness-desktop.git"
+  },
+  "homepage": "https://github.com/nymos111/deepseek-harness-desktop",
+  "bugs": {
+    "url": "https://github.com/nymos111/deepseek-harness-desktop/issues"
   }
 }
