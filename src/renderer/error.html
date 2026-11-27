@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'"
+    />
+    <title>DeepSeek Harness — ошибка</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="error">
+      <header>
+        <div class="mark">!</div>
+        <div>
+          <h1>Движок не запустился</h1>
+          <p class="msg" id="message">Не удалось поднять локальный DeepSeek Harness.</p>
+        </div>
+      </header>
+
+      <pre id="log">Загружаю журнал…</pre>
+
+      <div class="actions">
+        <button class="primary" id="retry">Повторить запуск</button>
+        <button id="copy">Копировать лог</button>
+        <button id="logs">Открыть папку логов</button>
+        <button class="ghost" id="quit">Выйти</button>
+      </div>
+
+      <p class="foot" id="foot"></p>
+    </main>
+    <script src="error.js"></script>
+  </body>
+</html>

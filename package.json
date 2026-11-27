@@ -1,0 +1,15 @@
+{
+  "name": "deepseek-harness",
+  "productName": "DeepSeek Harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native desktop shell for DeepSeek Harness: boots its own harness backend and hosts the UI in an Electron window.",
+  "license": "MIT",
+  "main": "src/main/index.js",
+  "scripts": {
+    "start": "bash scripts/launch.sh",
+    "install:desktop": "bash scripts/install.sh",
+    "uninstall:desktop": "bash scripts/uninstall.sh",
+    "icons": "bash scripts/make-icons.sh"
+  }
+}
